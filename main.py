@@ -71,7 +71,10 @@ def main():
             lines = fo.read().splitlines()
             
             if len(lines) > 1:
-                os.remove("messages/Me:")
+                try:
+                    os.remove("messages/Me:")
+                except:
+                    pass
                 progress = lines[0]
                 print("situation id: "+progress)
                 response = lines[1]
