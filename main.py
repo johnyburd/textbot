@@ -35,7 +35,7 @@ def lastsms():
     while 3:
         voice.sms()
         for msg in extractsms(voice.sms.html):
-            if os.path.isfile("messages/" + msg["from"]) == False: #if it is a first-time number
+            if os.path.isfile("messages/" + msg["from"]) == False and msg["from"] != "Me:": #if it is a first-time number and not from dextor
                 fo = open("messages/" + msg["from"], "a")
                 voice.send_sms(msg["from"], "Welcome to Dexter Bot's text-based RPG game. Type !help for help")
                 try:
@@ -47,10 +47,10 @@ def lastsms():
                     voice.send_sms(msg["from"], "no bot-crashing")
                     os.remove("messages/"+msg["from"])
                     print("IndexError handled from: "+msg["from"])
+                    fo.close()
 
 
-
-            else:
+            elif os.path.isfile("messages/" + msg["from"]) == True and msg["from"] != "Me:":
                 #print str(msg)
                 fo = open("messages/" + msg["from"], "r+")
                 lines = fo.read().splitlines()
@@ -68,11 +68,7 @@ def lastsms():
                     voice.send_sms(msg["from"], "no bot-crashing")
                     os.remove("messages/"+msg["from"])
                     print("IndexError handled from: "+msg["from"])
-
-
-                    
-
-            fo.close()
+                fo.close()
 
             for message in voice.sms().messages:
                 if str(message) == str(msg["id"]):
@@ -95,10 +91,11 @@ def main():
                 lines = fo.read().splitlines()
             
             if len(lines) > 1:
+                """
                 try:
                     os.remove("messages/Me:")
                 except:
-                    pass
+                    pass"""
                 progress = lines[0]
                 response = lines[1]               
                 print("situation id: "+progress+" from: "+filename+" said: "+response)
