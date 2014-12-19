@@ -1,0 +1,21 @@
+
+import subprocess
+
+while True:
+    try:
+        print subprocess.check_output(['python2', 'main.py'])
+    except KeyboardInterrupt:
+        break
+
+
+"""
+#!/bin/bash
+count = -1
+while(not abort):
+    count = (count+1) % 100
+    if count == 0:
+        python2 main.py
+    time.sleep(3)
+
+    #*/5 * * * * pgrep -f testing.py || nohup python /home/you/scripts/testing.py > test.out
+    """
