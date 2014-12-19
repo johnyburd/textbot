@@ -76,36 +76,49 @@ def main():
                 except:
                     pass
                 progress = lines[0]
-                print("situation id: "+progress)
-                response = lines[1]
-                print("their response: "+response)
+                response = lines[1]               
+                print("situation id: "+progress+"from: "+filename+" said: "+response)
+
                 prompt = ""
 
-                if int(progress) == 0:
-                    prompt = "Hello, what is your favorite color? Blue, Yellow, or Green]"
-                    progress = 1
-                elif int(progress) == 1:
-                    if response.lower() == "yellow":
-                        prompt = "what shade of yellow? Dark or light?"
-                        progress = 2
-                    elif response.lower() == "blue":
-                        prompt = "what shade of blue? Navy or Sky?"
-                        progress = 3
-                    elif response.lower() == "green":
-                        prompt = "what shade of green? Dark Green or Neon Green?"
-                        progress = 4
-                    else:
-                        prompt = "I don't understand.  Try again"
-                elif int(progress) == 2 or int(progress) == 3 or int(progress) == 4:
-                    prompt = "jk, I don't actually care"
-                    progress = 0
+                if re.match("\!.*", response):
+                    command = re.search("[^!][A-z0-9]*", response, flags=re.I).group(0)
+                    
+                    prompt = "command not found : " + command
+
                 else:
-                    prompt = "duuuude.  your save file is seriously messed up"
-                print(prompt)
+
+                    if int(progress) == 0:
+                        prompt = "Hello, what is your favorite color? Blue, Yellow, or Green"
+                        progress = 1
+                    elif int(progress) == 1:
+                        if response.lower() == "yellow":
+                            prompt = "what shade of yellow? Dark or light?"
+                            progress = 2
+                        elif response.lower() == "blue":
+                            prompt = "what shade of blue? Navy or Sky?"
+                            progress = 3
+                        elif response.lower() == "green":
+                            prompt = "what shade of green? Dark Green or Neon Green?"
+                            progress = 4
+                        else:
+                            prompt = "I don't understand.  Try again"
+
+                    elif int(progress) == 2 or int(progress) == 3 or int(progress) == 4:
+                        prompt = "jk, I don't actually care"
+                        progress = 0
+
+                    else:
+                        prompt = "duuuude.  your save file is seriously messed up"
+
+               
                 try:
                     voice.send_sms(filename, prompt)
+                    print("answered: "+prompt)
                 except:
                     print("stupid google voice probably didn't send")
+
+
                 fo.close()
                 fo = open("messages/" + filename, "w")
                 fo.write(str(progress))
