@@ -121,7 +121,7 @@ def main():
                     else:
                         prompt = "command not found : " + command
 
-                elif re.match("((dex.?.?.?).*((hello)|(hi)|(howdy)|(hey)|(greetings)).*)|(((hello)|(hey)|(hi)|(howdy)|(greetings)).*(dex.?.?.?)).*", response, flags=re.I):
+                elif re.match("(((dex)|(dv?b)).*((hello)|(hi)|(howdy)|(hey)|(greetings)).*)|(((hello)|(hey)|(hi)|(howdy)|(greetings)).*((dex)|(dv?b))).*", response, flags=re.I):
                     prompt = random.choice(["Hello!","Hi","Salutations.", "Why, hello there!"])
 
                 elif re.search("((what\'?s)|(what is)) ((your)|(youre)|(you're)|(ur)) (name)(.?)", response, flags=re.I):
@@ -130,11 +130,11 @@ def main():
                 elif re.search("(.*)(hint)(.*)", response, flags=re.I):
                     prompt = random.choice(["*gasp* what?!", "I can't give hints!", "D:", "figure it out"])
 
-                elif re.search("(shut) ?(up)(.*)(dex.?.?.?)(.*)", response, flags=re.I):
+                elif re.search("(shut) ?(up)(.*)((dex)|(dv?b))(.*)", response, flags=re.I):
                     #nothing
                     prompt = ""
 
-                elif re.search("(good)?(bye)(.*)(dex.?.?.?)(.*)", response, flags=re.I):
+                elif re.search("(good)?(bye)(.*)((dex)|(dv?b))(.*)", response, flags=re.I):
                     prompt = random.choice(["ttyl","cya","2daloo","bye"])
 
                 else:
