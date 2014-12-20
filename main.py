@@ -153,7 +153,7 @@ def main():
                             prompt = "what shade of green? Dark Green or Neon Green?"
                             progress = 4
                         else:
-                            prompt = random.choice(["I don't understand","The choices were blue, yellow, and green.","is that even a color?","I see. maybe you should try again","your mom is "+response])
+                            prompt = random.choice(["I don't understand","The choices were blue, yellow, and green.","is that even a color?","I see. maybe you should try again","your mom is "+response.lower()])
 
                     elif int(progress) == 2 or int(progress) == 3 or int(progress) == 4:
                         prompt = "jk, I don't actually care"
@@ -177,24 +177,29 @@ def main():
                 fo = open("messages/" + filename, "w")
                 fo.write(str(progress))
             
-
+def watch_lastsms():
+    while 3:
+        if savesms.run() == False:
+            print("restarting savesms process...")
+            savesms.start()
 
 print("logging in...")
 voice = Voice()
 try:
     voice.login("texterbot14","i<3texting")
 except:
-    print("unknown error")
+    print("login error")
     quit()
 print("logged in successfully")
 
-try:
-    savesms = Process(target=lastsms)
-    savesms.start()
-except:
-    savesms = Process(target=lastsms)
-    savesms.start()
+
+savesms = Process(target=lastsms)
+watch = Process(target=watch_lastsms)
+
+
+#savesms.start()
 #savesms.join()
+watch.start()
 
 main()
 
