@@ -136,6 +136,9 @@ def main():
 
                 elif re.search("(good)?(bye)(.*)((dex)|(dv?b))(.*)", response, flags=re.I):
                     prompt = random.choice(["ttyl","cya","2daloo","bye"])
+                
+                elif re.search("((.*)((your)|(you're)|(ur))(.*)((dex)|(dv?b)))|((.*)((dex)|(dv?b))(.*)((your)|(you're)|(youre)|(ur))(.*))", response, flags=re.I):
+                    prompt = "oh... oh yeah?"
 
                 else:
 
