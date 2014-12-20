@@ -35,9 +35,20 @@ def lastsms():
     while 3:
         voice.sms()
         for msg in extractsms(voice.sms.html):
-            if os.path.isfile("messages/" + msg["from"]) == False:
+            if os.path.isfile("messages/" + msg["from"]) == False: #if it is a first-time number
                 fo = open("messages/" + msg["from"], "a")
-                fo.write("0\n" + msg["text"])
+                voice.send_sms(msg["from"], "Welcome to Dexter Bot's text-based RPG game. Type !help for help")
+                try:
+                    fo.write("0\n" + msg["text"])
+                except UnicodeEncodeError:
+                    voice.send_sms(msg["from"], "only alpha-numeric characters please.")
+                    print("non-alpha-numeric detected")
+                except IndexError:
+                    voice.send_sms(msg["from"], "no bot-crashing")
+                    os.remove("messages/"+msg["from"])
+                    print("IndexError handled from: "+msg["from"])
+
+
 
             else:
                 #print str(msg)
@@ -47,8 +58,19 @@ def lastsms():
                 fo.close()
 
                 fo = open("messages/" + msg["from"], "w")
+                
+                try:
+                    fo.write(str(lines[0]) + "\n" + str(msg["text"]));
+                except UnicodeEncodeError:
+                    voice.send_sms(msg["from"], "only alpha-numeric characters please.")
+                    print("non-alpha-numeric detected")
+                except IndexError:
+                    voice.send_sms(msg["from"], "no bot-crashing")
+                    os.remove("messages/"+msg["from"])
+                    print("IndexError handled from: "+msg["from"])
 
-                fo.write(str(lines[0]) + "\n" + str(msg["text"]));
+
+                    
 
             fo.close()
 
@@ -68,7 +90,9 @@ def main():
             #check contents
             fo = open("messages/" + filename)
             #command = fo.read()
-            lines = fo.read().splitlines()
+            lines = []
+            if os.path.getsize("messages/"+filename) > 0:
+                lines = fo.read().splitlines()
             
             if len(lines) > 1:
                 try:
@@ -77,14 +101,44 @@ def main():
                     pass
                 progress = lines[0]
                 response = lines[1]               
-                print("situation id: "+progress+"from: "+filename+" said: "+response)
+                print("situation id: "+progress+" from: "+filename+" said: "+response)
 
                 prompt = ""
 
                 if re.match("\!.*", response):
                     command = re.search("[^!][A-z0-9]*", response, flags=re.I).group(0)
                     
-                    prompt = "command not found : " + command
+                    if command.lower() == "help":
+                        prompt = "!new - starts a new game \n!credits - display credits \nhello dexter - greeting"
+
+                    elif command.lower() == "credits":
+                        prompt = "Programer(s): Jonathan Buchanan\nStory: Keadin Hull\nAPI: google voice"
+                    
+                    elif command.lower() == "botsnack":
+                        prompt = ":D"
+                    elif command.lower() == "new":
+                        prompt = "game reset"
+                        progress = 0
+                    
+
+                    else:
+                        prompt = "command not found : " + command
+
+                elif re.match("((dex.?.?.?).*((hello)|(hi)|(howdy)|(hey)|(greetings)).*)|(((hello)|(hey)|(hi)|(howdy)|(greetings)).*(dex.?.?.?)).*", response, flags=re.I):
+                    prompt = random.choice(["Hello!","Hi","Salutations.", "Why, hello there!"])
+
+                elif re.search("((what\'?s)|(what is)) ((your)|(youre)|(you're)|(ur)) (name)(.?)", response, flags=re.I):
+                    prompt = "My name is Dexter V. Bot!"
+                
+                elif re.search("(.*)(hint)(.*)", response, flags=re.I):
+                    prompt = random.choice(["*gasp* what?!", "I can't give hints!", "D:", "figure it out"])
+
+                elif re.search("(shut) ?(up)(.*)(dex.?.?.?)(.*)", response, flags=re.I):
+                    #nothing
+                    prompt = ""
+
+                elif re.search("(good)?(bye)(.*)(dex.?.?.?)(.*)", response, flags=re.I):
+                    prompt = random.choice(["ttyl","cya","2daloo","bye"])
 
                 else:
 
@@ -102,11 +156,14 @@ def main():
                             prompt = "what shade of green? Dark Green or Neon Green?"
                             progress = 4
                         else:
-                            prompt = "I don't understand.  Try again"
+                            prompt = random.choice(["I don't understand","The choices were blue, yellow, and green.","is that even a color?","I see. maybe you should try again","your mom is "+response])
 
                     elif int(progress) == 2 or int(progress) == 3 or int(progress) == 4:
                         prompt = "jk, I don't actually care"
-                        progress = 0
+                        progress = 5
+                    
+                    elif int(progress) == 5:
+                        prompt = "you can type !new to reset game"
 
                     else:
                         prompt = "duuuude.  your save file is seriously messed up"
@@ -134,8 +191,12 @@ except:
     quit()
 print("logged in successfully")
 
-savesms = Process(target=lastsms)
-savesms.start()
+try:
+    savesms = Process(target=lastsms)
+    savesms.start()
+except:
+    savesms = Process(target=lastsms)
+    savesms.start()
 #savesms.join()
 
 main()
